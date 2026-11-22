@@ -124,6 +124,7 @@ export default {
           *****
         </template>
       </div>
+    </div>
     <div class="&__content">
       <CsCryptoList
         class="&__content-list"
