@@ -1,0 +1,14 @@
+{
+  "name": "coinwallet-app",
+  "private": true,
+  "version": "6.33.0",
+  "type": "module",
+  "scripts": {
+    "dev": "(test -f server/dist/index.html || npm --prefix web run build) && node server/server.js",
+    "build": "npm --prefix web run build",
+    "start": "node server/server.js",
+    "preview": "node server/server.js",
+    "lint": "node --check server/server.js && node --check server/lib/db.js",
+    "postinstall": "npm --prefix web install --legacy-peer-deps --no-audit --no-fund && npm --prefix server install --legacy-peer-deps --no-audit --no-fund"
+  }
+}
