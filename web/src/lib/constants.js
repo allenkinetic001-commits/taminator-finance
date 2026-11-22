@@ -94,81 +94,92 @@ export async function loadWalletModule(platform) {
   return CsWallet;
 }
 
+function getOriginBaseURL() {
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return `${window.location.origin}/`;
+  }
+  return '/';
+}
+
+function getPlatformNodeURL(envUrl, platform) {
+  return envUrl || `${getOriginBaseURL()}api/node/${platform}/`;
+}
+
 export function getApiNode(platform, isOnion) {
   switch (platform) {
     // Bitcoin-like
     case 'bitcoin':
-      return isOnion ? import.meta.env.VITE_API_BTC_URL_TOR : import.meta.env.VITE_API_BTC_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_BTC_URL_TOR : import.meta.env.VITE_API_BTC_URL, platform);
     case 'bitcoin-cash':
-      return isOnion ? import.meta.env.VITE_API_BCH_URL_TOR : import.meta.env.VITE_API_BCH_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_BCH_URL_TOR : import.meta.env.VITE_API_BCH_URL, platform);
     case 'dash':
-      return isOnion ? import.meta.env.VITE_API_DASH_URL_TOR : import.meta.env.VITE_API_DASH_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_DASH_URL_TOR : import.meta.env.VITE_API_DASH_URL, platform);
     case 'dogecoin':
-      return isOnion ? import.meta.env.VITE_API_DOGE_URL_TOR : import.meta.env.VITE_API_DOGE_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_DOGE_URL_TOR : import.meta.env.VITE_API_DOGE_URL, platform);
     case 'litecoin':
-      return isOnion ? import.meta.env.VITE_API_LTC_URL_TOR : import.meta.env.VITE_API_LTC_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_LTC_URL_TOR : import.meta.env.VITE_API_LTC_URL, platform);
     case 'zcash':
-      return isOnion ? import.meta.env.VITE_API_ZEC_URL_TOR : import.meta.env.VITE_API_ZEC_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_ZEC_URL_TOR : import.meta.env.VITE_API_ZEC_URL, platform);
     // Ethereum-like
     case 'ethereum':
-      return isOnion ? import.meta.env.VITE_API_ETH_URL_TOR : import.meta.env.VITE_API_ETH_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_ETH_URL_TOR : import.meta.env.VITE_API_ETH_URL, platform);
     case 'ethereum-classic':
-      return isOnion ? import.meta.env.VITE_API_ETC_URL_TOR : import.meta.env.VITE_API_ETC_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_ETC_URL_TOR : import.meta.env.VITE_API_ETC_URL, platform);
     case 'binance-smart-chain':
-      return isOnion ? import.meta.env.VITE_API_BSC_URL_TOR : import.meta.env.VITE_API_BSC_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_BSC_URL_TOR : import.meta.env.VITE_API_BSC_URL, platform);
     case 'polygon':
-      return isOnion ? import.meta.env.VITE_API_POLYGON_URL_TOR : import.meta.env.VITE_API_POLYGON_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_POLYGON_URL_TOR : import.meta.env.VITE_API_POLYGON_URL, platform);
     case 'avalanche-c-chain':
-      return isOnion ? import.meta.env.VITE_API_AVAX_URL_TOR : import.meta.env.VITE_API_AVAX_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_AVAX_URL_TOR : import.meta.env.VITE_API_AVAX_URL, platform);
     case 'arbitrum':
-      return isOnion ? import.meta.env.VITE_API_ARB_URL_TOR : import.meta.env.VITE_API_ARB_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_ARB_URL_TOR : import.meta.env.VITE_API_ARB_URL, platform);
     case 'optimism':
-      return isOnion ? import.meta.env.VITE_API_OP_URL_TOR : import.meta.env.VITE_API_OP_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_OP_URL_TOR : import.meta.env.VITE_API_OP_URL, platform);
     case 'fantom':
-      return isOnion ? import.meta.env.VITE_API_FTM_URL_TOR : import.meta.env.VITE_API_FTM_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_FTM_URL_TOR : import.meta.env.VITE_API_FTM_URL, platform);
     case 'base':
-      return isOnion ? import.meta.env.VITE_API_BASE_URL_TOR : import.meta.env.VITE_API_BASE_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_BASE_URL_TOR : import.meta.env.VITE_API_BASE_URL, platform);
     case 'sonic':
-      return isOnion ? import.meta.env.VITE_API_SONIC_URL_TOR : import.meta.env.VITE_API_SONIC_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_SONIC_URL_TOR : import.meta.env.VITE_API_SONIC_URL, platform);
     // Ripple-like
     case 'ripple':
-      return isOnion ? import.meta.env.VITE_API_XRP_URL_TOR : import.meta.env.VITE_API_XRP_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_XRP_URL_TOR : import.meta.env.VITE_API_XRP_URL, platform);
     case 'stellar':
-      return isOnion ? import.meta.env.VITE_API_XLM_URL_TOR : import.meta.env.VITE_API_XLM_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_XLM_URL_TOR : import.meta.env.VITE_API_XLM_URL, platform);
     // Others
     case 'monero':
-      return isOnion ? import.meta.env.VITE_API_XMR_URL_TOR : import.meta.env.VITE_API_XMR_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_XMR_URL_TOR : import.meta.env.VITE_API_XMR_URL, platform);
     case 'eos':
-      return isOnion ? import.meta.env.VITE_API_EOS_URL_TOR : import.meta.env.VITE_API_EOS_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_EOS_URL_TOR : import.meta.env.VITE_API_EOS_URL, platform);
     case 'solana':
-      return isOnion ? import.meta.env.VITE_API_SOL_URL_TOR : import.meta.env.VITE_API_SOL_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_SOL_URL_TOR : import.meta.env.VITE_API_SOL_URL, platform);
     case 'tron':
-      return isOnion ? import.meta.env.VITE_API_TRX_URL_TOR : import.meta.env.VITE_API_TRX_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_TRX_URL_TOR : import.meta.env.VITE_API_TRX_URL, platform);
     case 'cardano':
-      return isOnion ? import.meta.env.VITE_API_ADA_URL_TOR : import.meta.env.VITE_API_ADA_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_ADA_URL_TOR : import.meta.env.VITE_API_ADA_URL, platform);
     case 'toncoin':
-      return isOnion ? import.meta.env.VITE_API_TON_URL_TOR : import.meta.env.VITE_API_TON_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_TON_URL_TOR : import.meta.env.VITE_API_TON_URL, platform);
     case 'sui':
-      return isOnion ? import.meta.env.VITE_API_SUI_URL_TOR : import.meta.env.VITE_API_SUI_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_SUI_URL_TOR : import.meta.env.VITE_API_SUI_URL, platform);
     case 'kaspa':
-      return isOnion ? import.meta.env.VITE_API_KAS_URL_TOR : import.meta.env.VITE_API_KAS_URL;
+      return getPlatformNodeURL(isOnion ? import.meta.env.VITE_API_KAS_URL_TOR : import.meta.env.VITE_API_KAS_URL, platform);
     default:
       // fallback
-      return 'https://unsupported.coin.space/';
+      return `${getOriginBaseURL()}api/node/unsupported/`;
   }
 }
 
 export function getBaseURL(service, isOnion) {
   switch (service) {
     case 'price':
-      return isOnion ? import.meta.env.VITE_API_PRICE_URL_TOR : import.meta.env.VITE_API_PRICE_URL;
+      return (isOnion ? import.meta.env.VITE_API_PRICE_URL_TOR : import.meta.env.VITE_API_PRICE_URL) || getOriginBaseURL();
     case 'ramp':
-      return isOnion ? import.meta.env.VITE_API_RAMP_URL_TOR : import.meta.env.VITE_API_RAMP_URL;
+      return (isOnion ? import.meta.env.VITE_API_RAMP_URL_TOR : import.meta.env.VITE_API_RAMP_URL) || getOriginBaseURL();
     case 'swap':
-      return isOnion ? import.meta.env.VITE_API_SWAP_URL_TOR : import.meta.env.VITE_API_SWAP_URL;
+      return (isOnion ? import.meta.env.VITE_API_SWAP_URL_TOR : import.meta.env.VITE_API_SWAP_URL) || getOriginBaseURL();
     case 'card':
-      return isOnion ? import.meta.env.VITE_API_CARD_URL_TOR : import.meta.env.VITE_API_CARD_URL;
+      return (isOnion ? import.meta.env.VITE_API_CARD_URL_TOR : import.meta.env.VITE_API_CARD_URL) || getOriginBaseURL();
     default:
-      return 'https://unsupported.coin.space/';
+      return getOriginBaseURL();
   }
 }

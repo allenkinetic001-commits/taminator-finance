@@ -1,8 +1,93 @@
+import cryptoDb from '@coinspace/crypto-db';
 import db from './db.js';
 
 const COLLECTION = 'cryptos';
 
+const POPULAR_IDS = [
+  'bitcoin@bitcoin',
+  'ethereum@ethereum',
+  'tether@ethereum',
+  'solana@solana',
+  'binance-coin@binance-smart-chain',
+  'xrp@ripple',
+  'usd-coin@ethereum',
+  'dogecoin@dogecoin',
+  'cardano@cardano',
+  'tron@tron',
+  'litecoin@litecoin',
+  'monero@monero',
+  'toncoin@toncoin',
+  'sui@sui',
+  'bitcoin-cash@bitcoin-cash',
+  'stellar@stellar',
+  'dash@dash',
+  'polygon@polygon',
+  'avalanche@avalanche-c-chain',
+  'ethereum@arbitrum',
+  'ethereum@optimism',
+  'ethereum@base',
+  'ethereum-classic@ethereum-classic',
+  'sonic@sonic',
+  'zcash@zcash',
+  'kaspa@kaspa',
+  'eos@eos',
+];
+
+const popularRankMap = new Map(POPULAR_IDS.map((id, index) => [id, index + 1]));
+
+const enrichedCryptos = cryptoDb
+  .map((item, idx) => {
+    const popularRank = popularRankMap.get(item._id);
+    const rank = popularRank ?? (item.type === 'coin' ? 100 + idx : 1000 + idx);
+    return {
+      ...item,
+      deprecated: Boolean(item.deprecated),
+      rank,
+      meta: {
+        ...(item.meta || {}),
+        rank,
+        ...(popularRank ? { popular: popularRank } : {}),
+      },
+    };
+  })
+  .sort((a, b) => a.rank - b.rank || a._id.localeCompare(b._id));
+
+const cryptosById = new Map(enrichedCryptos.map((item) => [item._id, item]));
+
+let seeded = false;
+async function ensureSeeded() {
+  if (seeded) return;
+  seeded = true;
+  const existing = await db.collection(COLLECTION).find({}, { limit: 1 }).toArray();
+  if (existing.length > 0) return;
+  const ops = enrichedCryptos.map((item) => ({
+    updateOne: {
+      filter: { _id: item._id },
+      update: { $setOnInsert: item },
+      upsert: true,
+    },
+  }));
+  await db.collection(COLLECTION).bulkWrite(ops);
+}
+
+function getById(id) {
+  return cryptosById.get(id);
+}
+
+function getV1Cryptos() {
+  return enrichedCryptos.map((item) => {
+    const out = { ...item };
+    delete out.rank;
+    delete out.prices;
+    delete out.change;
+    delete out.updated_at;
+    delete out.synchronized_at;
+    return out;
+  });
+}
+
 async function getAll(limit = 0) {
+  await ensureSeeded();
   const cryptos = await db.collection(COLLECTION)
     .find({
       deprecated: false,
@@ -23,6 +108,7 @@ async function getAll(limit = 0) {
 }
 
 async function getAllV4(limit = 0) {
+  await ensureSeeded();
   const cryptos = await db.collection(COLLECTION)
     .find({}, {
       limit,
@@ -161,6 +247,9 @@ async function getMarket(coingeckoIds, currency) {
 }
 
 export default {
+  ensureSeeded,
+  getById,
+  getV1Cryptos,
   getAll,
   getAllV4,
   getTicker,

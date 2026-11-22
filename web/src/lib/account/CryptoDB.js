@@ -46,12 +46,19 @@ export default class CryptoDB {
   }
 
   async init() {
-    this.#db = await this.#request({
+    const db = await this.#request({
       url: 'api/v1/cryptos',
       method: 'get',
     });
+    if (!Array.isArray(db)) {
+      throw new TypeError('Invalid cryptos response');
+    }
+    this.#db = db;
     for (const item of this.#db) {
       item.supported = this.#isSupported(item);
+      if (!item.meta || typeof item.meta !== 'object') {
+        item.meta = {};
+      }
       deepFreeze(item);
       if (item.type === 'coin') {
         this.#platforms.set(item.platform, item);

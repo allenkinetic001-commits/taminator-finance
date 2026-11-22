@@ -5,10 +5,14 @@ import express from 'express';
 import { isHttpError } from 'http-errors';
 import middleware from './middleware.js';
 
+import apiV1 from './lib/v1/api.js';
 import apiV3 from './lib/v3/api.js';
 import apiV4 from './lib/v4/api.js';
+import cryptos from './lib/cryptos.js';
+import nodeApi from './lib/nodeApi.js';
 
 process.env.USERNAME_SALT ||= 'coinspace-local-salt';
+await cryptos.ensureSeeded().catch((err) => console.error('cryptos seed error:', err));
 
 const app = express();
 
@@ -26,9 +30,21 @@ app.use(Sentry.Handlers.requestHandler());
 
 middleware.init(app);
 
+// Crypto logos
+app.use('/logo', express.static(fileURLToPath(new URL('./node_modules/@coinspace/crypto-db/logo', import.meta.url))));
+app.use('/logo-dark', express.static(fileURLToPath(new URL('./node_modules/@coinspace/crypto-db/logo-dark', import.meta.url))));
+app.use(['/logo', '/logo-dark'], (req, res) => {
+  res.status(404).end();
+});
+
 // API routes
+app.use('/api/v1', apiV1);
 app.use('/api/v3', apiV3);
 app.use('/api/v4', apiV4);
+app.use('/api/node/:platform', nodeApi);
+app.all('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API endpoint not found' });
+});
 app.set('views', fileURLToPath(new URL('./views', import.meta.url)));
 app.set('view engine', 'ejs');
 

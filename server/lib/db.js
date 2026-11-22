@@ -396,6 +396,38 @@ function createDuplicateKeyError() {
 function createCollection(name) {
   const store = getStore(name);
 
+  async function updateOneInternal(filter, update, options = {}, skipPersist = false) {
+    const idx = store.findIndex((d) => matchDoc(d, filter));
+    if (idx === -1) {
+      if (options.upsert) {
+        const newDoc = {};
+        if (filter._id !== undefined && typeof filter._id !== 'object') {
+          newDoc._id = filter._id;
+        }
+        if (newDoc._id !== undefined && store.some((d) => d._id === newDoc._id)) {
+          throw createDuplicateKeyError();
+        }
+        applyUpdate(newDoc, update, filter, true);
+        store.push(newDoc);
+        if (!skipPersist) persistDb();
+        return { matchedCount: 0, modifiedCount: 0, upsertedCount: 1 };
+      }
+      return { matchedCount: 0, modifiedCount: 0, upsertedCount: 0 };
+    }
+
+    const target = store[idx];
+    if (name === 'wallets' && update.$set?.username_sha) {
+      const clash = store.find((d, i) => i !== idx && d.username_sha === update.$set.username_sha);
+      if (clash) {
+        throw createDuplicateKeyError();
+      }
+    }
+
+    applyUpdate(target, update, filter, false);
+    if (!skipPersist) persistDb();
+    return { matchedCount: 1, modifiedCount: 1, upsertedCount: 0 };
+  }
+
   return {
     async createIndexes() {
       return [];
@@ -420,35 +452,7 @@ function createCollection(name) {
       return { insertedCount: 1, insertedId: item._id };
     },
     async updateOne(filter, update, options = {}) {
-      const idx = store.findIndex((d) => matchDoc(d, filter));
-      if (idx === -1) {
-        if (options.upsert) {
-          const newDoc = {};
-          if (filter._id !== undefined && typeof filter._id !== 'object') {
-            newDoc._id = filter._id;
-          }
-          if (newDoc._id !== undefined && store.some((d) => d._id === newDoc._id)) {
-            throw createDuplicateKeyError();
-          }
-          applyUpdate(newDoc, update, filter, true);
-          store.push(newDoc);
-          persistDb();
-          return { matchedCount: 0, modifiedCount: 0, upsertedCount: 1 };
-        }
-        return { matchedCount: 0, modifiedCount: 0, upsertedCount: 0 };
-      }
-
-      const target = store[idx];
-      if (name === 'wallets' && update.$set?.username_sha) {
-        const clash = store.find((d, i) => i !== idx && d.username_sha === update.$set.username_sha);
-        if (clash) {
-          throw createDuplicateKeyError();
-        }
-      }
-
-      applyUpdate(target, update, filter, false);
-      persistDb();
-      return { matchedCount: 1, modifiedCount: 1, upsertedCount: 0 };
+      return updateOneInternal(filter, update, options, false);
     },
     async findOneAndUpdate(filter, update, options = {}) {
       const idx = store.findIndex((d) => matchDoc(d, filter));
@@ -481,9 +485,9 @@ function createCollection(name) {
     async bulkWrite(ops = []) {
       for (const op of ops) {
         if (op.updateOne) {
-          await this.updateOne(op.updateOne.filter, op.updateOne.update, {
+          await updateOneInternal(op.updateOne.filter, op.updateOne.update, {
             upsert: op.updateOne.upsert,
-          });
+          }, true);
         }
       }
       persistDb();
