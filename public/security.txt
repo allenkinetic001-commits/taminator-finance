@@ -1,7 +1,0 @@
-Contact: support@coin.space
-Encryption:
-Acknowledgements:
-Policy:
-Signature:
-Hiring:
-OpenBugBounty: https://openbugbounty.org/bugbounty/CoinAppWallet/

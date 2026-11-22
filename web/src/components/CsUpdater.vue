@@ -27,10 +27,13 @@ export default {
   },
   methods: {
     async checkUpdate() {
-      const arch = (supportedDistribution.includes(this.env.VITE_DISTRIBUTION) && window.electron?.arch) || 'any';
+      const version = this.env?.VITE_VERSION || '6.33.0';
+      if (!version || version === 'undefined') return;
+      const distribution = this.env?.VITE_DISTRIBUTION || 'web';
+      const arch = (supportedDistribution.includes(distribution) && window.electron?.arch) || 'any';
       try {
         this.updateInfo = await this.$account.request({
-          url: `api/v4/update/${this.env.VITE_DISTRIBUTION}/${arch}/v${this.env.VITE_VERSION}`,
+          url: `api/v4/update/${distribution}/${arch}/v${version}`,
           method: 'get',
           id: true,
         });
@@ -60,7 +63,7 @@ export default {
     :title="$t('Update')"
     @close="show = false"
   >
-    {{ $t('A new version of Coin Wallet is available. Would you like to update it now?') }}
+    {{ $t('A new version of Taminator is available. Would you like to update it now?') }}
     <template #footer>
       <CsButtonGroup>
         <CsButton

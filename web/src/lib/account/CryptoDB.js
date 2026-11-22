@@ -26,7 +26,7 @@ export default class CryptoDB {
       return false;
     } else if (SUPPORTED_PLATFORMS.includes(crypto.platform)) {
       if (typeof crypto.supported === 'string' && femver.isValid(crypto.supported)) {
-        return femver.gte(import.meta.env.VITE_VERSION, crypto.supported);
+        return femver.gte(import.meta.env.VITE_VERSION || '6.33.0', crypto.supported);
       }
       return true;
     }

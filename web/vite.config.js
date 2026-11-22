@@ -12,10 +12,28 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig(({ mode }) => {
   const isHttps = process.argv.includes('--https');
-  const env = loadEnv(mode, './');
+  const loadedEnv = loadEnv(mode, './');
+  const env = {
+    VITE_BUILD_TYPE: 'web',
+    VITE_PLATFORM: 'web',
+    VITE_DISTRIBUTION: 'web',
+    VITE_NAME: 'Taminator',
+    VITE_VERSION: '6.33.0',
+    VITE_SITE_URL: '',
+    VITE_API_CSP: '',
+    ...loadedEnv,
+  };
   return {
+    define: {
+      'import.meta.env.VITE_BUILD_TYPE': JSON.stringify(env.VITE_BUILD_TYPE),
+      'import.meta.env.VITE_PLATFORM': JSON.stringify(env.VITE_PLATFORM),
+      'import.meta.env.VITE_DISTRIBUTION': JSON.stringify(env.VITE_DISTRIBUTION),
+      'import.meta.env.VITE_NAME': JSON.stringify(env.VITE_NAME),
+      'import.meta.env.VITE_VERSION': JSON.stringify(env.VITE_VERSION),
+    },
     server: {
-      open: true,
+      port: 3000,
+      host: '0.0.0.0',
       strictPort: true,
       proxy: {
         '/api': { target: 'http://localhost:8080', headers: isHttps ? { 'X-Forwarded-Proto': 'https' } : {} },

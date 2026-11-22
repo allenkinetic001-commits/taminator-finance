@@ -6,13 +6,10 @@ import AuthStepLayout from '../../layouts/AuthStepLayout.vue';
 import CsButton from '../../components/CsButton.vue';
 import CsStep from '../../components/CsStep.vue';
 
-import WalletGradientIcon from '../../assets/svg/walletGradient.svg';
-
 export default {
   components: {
     CsButton,
     AuthStepLayout,
-    WalletGradientIcon,
   },
   extends: CsStep,
   methods: {
@@ -32,7 +29,11 @@ export default {
     faded
   >
     <div class="&__wallet">
-      <WalletGradientIcon class="&__wallet-icon" />
+      <img
+        src="/assets/aistudio/cat-logo-transparent_7f5a03c6.png"
+        alt="Taminator"
+        class="&__wallet-icon"
+      >
     </div>
     <div class="&__container">
       <div class="&__header">
@@ -60,6 +61,7 @@ export default {
     &__wallet {
       display: flex;
       flex-grow: 1;
+      align-items: center;
       justify-content: center;
       @include breakpoint(lg) {
         flex-grow: 0;
@@ -69,8 +71,10 @@ export default {
 
     &__wallet-icon {
       width: var(--spacing-8xl);
+      height: auto;
+      object-fit: contain;
       @include breakpoint(lg) {
-        width: var(--spacing-4xl);
+        width: var(--spacing-5xl);
       }
     }
 

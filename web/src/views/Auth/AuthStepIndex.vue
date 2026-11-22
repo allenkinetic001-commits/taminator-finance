@@ -4,19 +4,16 @@ import CsButtonGroup from '../../components/CsButtonGroup.vue';
 import CsStep from '../../components/CsStep.vue';
 import { onShowOnHide } from '../../lib/mixins.js';
 
-import LogoIcon from '../../assets/svg/logo.svg';
-
 export default {
   components: {
     CsButton,
     CsButtonGroup,
-    LogoIcon,
   },
   extends: CsStep,
   mixins: [onShowOnHide],
   computed: {
     copyright() {
-      return `© ${new Date().getFullYear()} CoinSpace`;
+      return `© ${new Date().getFullYear()} Taminator`;
     },
   },
   async onShow() {
@@ -34,7 +31,14 @@ export default {
   <div class="&">
     <div class="&__frame">
       <div class="&__logo-wrapper">
-        <LogoIcon class="&__logo" />
+        <img
+          src="/assets/aistudio/cat-logo-transparent_7f5a03c6.png"
+          alt="Taminator"
+          class="&__logo"
+        >
+        <div class="&__brand-name">
+          Taminator
+        </div>
       </div>
       <CsButtonGroup class="&__button-group">
         <CsButton
@@ -101,7 +105,9 @@ export default {
       display: flex;
       flex-direction: column;
       flex-grow: 1;
+      align-items: center;
       justify-content: center;
+      gap: var(--spacing-md);
       @include breakpoint(lg) {
         flex-grow: 0;
       }
@@ -109,6 +115,16 @@ export default {
 
     &__logo {
       width: 10rem;
+      height: auto;
+      object-fit: contain;
+    }
+
+    &__brand-name {
+      @include text-2xl;
+      @include text-bold;
+      color: var(--color-white);
+      letter-spacing: 0.02em;
+      text-align: center;
     }
 
     &__button-group {

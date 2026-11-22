@@ -81,10 +81,10 @@ export function registerProtocolHandler(crypto, account) {
     account.clientStorage.setProtocolHandler(crypto.scheme);
     const handler = new URL(`${import.meta.env.BASE_URL}bip21/%s`, import.meta.env.VITE_SITE_URL || window.location.origin);
     try {
-      navigator.registerProtocolHandler(crypto.scheme, handler, 'Coin Wallet');
+      navigator.registerProtocolHandler(crypto.scheme, handler, 'Taminator');
     } catch (e) {
       try {
-        navigator.registerProtocolHandler(`web+${crypto.scheme}`, handler, 'Coin Wallet');
+        navigator.registerProtocolHandler(`web+${crypto.scheme}`, handler, 'Taminator');
         // eslint-disable-next-line
       } catch (e) {}
     }
