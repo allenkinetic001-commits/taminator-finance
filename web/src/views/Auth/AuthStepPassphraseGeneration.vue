@@ -31,8 +31,13 @@ export default {
     <div class="&__wallet">
       <img
         src="/assets/aistudio/cat-logo-transparent_7f5a03c6.png"
-        alt="Taminator"
+        alt="Taminator Robocat Logo"
         class="&__wallet-icon"
+      >
+      <img
+        src="/assets/aistudio/taminator_transparent_1590ccfa.png"
+        alt="Taminator"
+        class="&__wallet-wordmark"
       >
     </div>
     <div class="&__container">
@@ -60,21 +65,34 @@ export default {
   .#{ $filename } {
     &__wallet {
       display: flex;
+      flex-direction: column;
       flex-grow: 1;
       align-items: center;
       justify-content: center;
+      gap: var(--spacing-xs);
       @include breakpoint(lg) {
         flex-grow: 0;
+        align-items: flex-start;
         justify-content: flex-start;
       }
     }
 
     &__wallet-icon {
-      width: var(--spacing-8xl);
+      width: 6.5rem;
       height: auto;
       object-fit: contain;
       @include breakpoint(lg) {
-        width: var(--spacing-5xl);
+        width: 4.5rem;
+      }
+    }
+
+    &__wallet-wordmark {
+      width: 11rem;
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+      @include breakpoint(lg) {
+        width: 8.5rem;
       }
     }
 

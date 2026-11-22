@@ -17,7 +17,7 @@ export default {
     },
   },
   async onShow() {
-    window.systemBars?.setStyle('dark');
+    window.systemBars?.setStyle('light');
     document.documentElement.dataset.statusbarStyle = 'locked';
   },
   async onHide() {
@@ -33,8 +33,13 @@ export default {
       <div class="&__logo-wrapper">
         <img
           src="/assets/aistudio/cat-logo-transparent_7f5a03c6.png"
-          alt="Taminator"
+          alt="Taminator Robocat Logo"
           class="&__logo"
+        >
+        <img
+          src="/assets/aistudio/taminator_transparent_1590ccfa.png"
+          alt="Taminator"
+          class="&__wordmark"
         >
       </div>
       <CsButtonGroup class="&__button-group">
@@ -45,7 +50,7 @@ export default {
           {{ $t('Create new wallet') }}
         </CsButton>
         <CsButton
-          type="white-link"
+          type="primary-link"
           @click="next('login')"
         >
           {{ $t('Open existing wallet') }}
@@ -92,7 +97,7 @@ export default {
       flex-direction: column;
       flex-grow: 1;
       align-items: center;
-      gap: var(--spacing-5xl);
+      gap: var(--spacing-4xl);
       @include breakpoint(lg) {
         justify-content: center;
       }
@@ -104,13 +109,21 @@ export default {
       flex-grow: 1;
       align-items: center;
       justify-content: center;
+      gap: var(--spacing-md);
       @include breakpoint(lg) {
         flex-grow: 0;
       }
     }
 
     &__logo {
-      width: 11rem;
+      width: 9.5rem;
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    &__wordmark {
+      width: 16rem;
       max-width: 100%;
       height: auto;
       object-fit: contain;
@@ -125,7 +138,7 @@ export default {
 
     &__copyright {
       @include text-xs;
-      color: var(--color-white);
+      color: var(--color-secondary);
     }
   }
 </style>

@@ -49,22 +49,19 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000">
-    <meta name="msapplication-TileColor" content="#2C3832">
-    <meta name="theme-color" content="#2C3832">
+    <meta name="msapplication-TileColor" content="#0066FF">
+    <meta name="theme-color" content="#0066FF">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Taminator">
     <script>
       try {
         const cached = localStorage.getItem('_cs_theme');
-        const theme = ['system', 'light', 'dark'].includes(cached) ? cached : 'system';
+        const theme = ['system', 'light', 'dark'].includes(cached) ? cached : 'light';
         localStorage.setItem('_cs_theme', theme);
         window.cordova?.plugins?.Theme?.setStyle(theme);
         window.electron?.setTheme(theme);
-        const resolvedTheme = theme === 'system'
-          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-          : theme;
-        document.documentElement.dataset.theme = resolvedTheme;
+        document.documentElement.dataset.theme = 'light';
       } catch {}
     </script>
     <style>

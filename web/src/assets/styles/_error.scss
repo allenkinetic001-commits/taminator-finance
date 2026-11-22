@@ -60,16 +60,16 @@
     @include text-lg;
     @include text-bold;
     margin-bottom: var(--spacing-md);
-    color: var(--color-white);
+    color: var(--color-text, #0f172a);
   }
 
   &__message {
     @include text-md;
-    color: var(--color-white);
+    color: var(--color-text, #0f172a);
   }
 
   &__copyright {
     @include text-xs;
-    color: var(--color-white);
+    color: var(--color-secondary, #5c6b7a);
   }
 }
