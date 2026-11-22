@@ -6,13 +6,13 @@ import AuthStepLayout from '../../layouts/AuthStepLayout.vue';
 import CsButton from '../../components/CsButton.vue';
 import CsStep from '../../components/CsStep.vue';
 
-import WalletGradientIcon from '../../assets/svg/walletGradient.svg';
+import LogoIcon from '../../assets/svg/logo.svg';
 
 export default {
   components: {
     CsButton,
     AuthStepLayout,
-    WalletGradientIcon,
+    LogoIcon,
   },
   extends: CsStep,
   methods: {
@@ -32,7 +32,7 @@ export default {
     faded
   >
     <div class="&__wallet">
-      <WalletGradientIcon class="&__wallet-icon" />
+      <LogoIcon class="&__wallet-icon" />
     </div>
     <div class="&__container">
       <div class="&__header">
