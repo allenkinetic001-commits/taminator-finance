@@ -38,8 +38,8 @@ export class WalletConnect extends EventEmitter {
         logger: 'fatal',
       }),
       metadata: {
-        name: 'Coin Wallet',
-        description: 'Coin Wallet is a non-custodial multicurrency wallet for multiple platforms.',
+        name: 'Taminator',
+        description: 'Taminator is a non-custodial multicurrency wallet.',
         url: 'https://coin.space/',
         icons: [],
       },

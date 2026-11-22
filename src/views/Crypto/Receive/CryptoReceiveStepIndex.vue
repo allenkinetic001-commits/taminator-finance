@@ -150,7 +150,7 @@ export default {
             text: this.address,
           });
         } else {
-          const body = encodeURIComponent(`${this.address}\n\nSent from Coin Wallet\nhttps://coin.space`);
+          const body = encodeURIComponent(`${this.address}\n\nSent from Taminator\n${window.location.origin}`);
           this.$safeOpen(`mailto:?body=${body}`);
         }
       } catch (err) { /* empty */ }

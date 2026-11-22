@@ -62,7 +62,7 @@ export default {
     :title="$t('Update')"
     @close="show = false"
   >
-    {{ $t('A new version of Coin Wallet is available. Would you like to update it now?') }}
+    {{ $t('A new version of Taminator is available. Would you like to update it now?') }}
     <template #footer>
       <CsButtonGroup>
         <CsButton
