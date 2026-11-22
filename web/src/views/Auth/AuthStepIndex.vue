@@ -32,7 +32,7 @@ export default {
     <div class="&__frame">
       <div class="&__logo-wrapper">
         <img
-          src="/assets/aistudio/taminator_transparent_1590ccfa.png"
+          src="/assets/aistudio/cat-logo-transparent_7f5a03c6.png"
           alt="Taminator"
           class="&__logo"
         >
@@ -110,7 +110,7 @@ export default {
     }
 
     &__logo {
-      width: 18rem;
+      width: 11rem;
       max-width: 100%;
       height: auto;
       object-fit: contain;
