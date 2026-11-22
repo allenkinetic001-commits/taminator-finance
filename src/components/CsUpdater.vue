@@ -27,10 +27,12 @@ export default {
   },
   methods: {
     async checkUpdate() {
-      const arch = (supportedDistribution.includes(this.env.VITE_DISTRIBUTION) && window.electron?.arch) || 'any';
+      if (!this.env?.VITE_VERSION || this.env.VITE_VERSION === 'undefined') return;
+      const distribution = this.env?.VITE_DISTRIBUTION || 'web';
+      const arch = (supportedDistribution.includes(distribution) && window.electron?.arch) || 'any';
       try {
         this.updateInfo = await this.$account.request({
-          url: `api/v4/update/${this.env.VITE_DISTRIBUTION}/${arch}/v${this.env.VITE_VERSION}`,
+          url: `api/v4/update/${distribution}/${arch}/v${this.env.VITE_VERSION}`,
           method: 'get',
           id: true,
         });
