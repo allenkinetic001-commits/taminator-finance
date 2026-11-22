@@ -32,13 +32,10 @@ export default {
     <div class="&__frame">
       <div class="&__logo-wrapper">
         <img
-          src="/assets/aistudio/cat-logo-transparent_7f5a03c6.png"
+          src="/assets/aistudio/taminator_transparent_1590ccfa.png"
           alt="Taminator"
           class="&__logo"
         >
-        <div class="&__brand-name">
-          Taminator
-        </div>
       </div>
       <CsButtonGroup class="&__button-group">
         <CsButton
@@ -107,24 +104,16 @@ export default {
       flex-grow: 1;
       align-items: center;
       justify-content: center;
-      gap: var(--spacing-md);
       @include breakpoint(lg) {
         flex-grow: 0;
       }
     }
 
     &__logo {
-      width: 10rem;
+      width: 18rem;
+      max-width: 100%;
       height: auto;
       object-fit: contain;
-    }
-
-    &__brand-name {
-      @include text-2xl;
-      @include text-bold;
-      color: var(--color-white);
-      letter-spacing: 0.02em;
-      text-align: center;
     }
 
     &__button-group {

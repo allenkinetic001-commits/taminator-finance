@@ -30,7 +30,7 @@ export default {
   >
     <div class="&__wallet">
       <img
-        src="/assets/aistudio/cat-logo-transparent_7f5a03c6.png"
+        src="/assets/aistudio/taminator_transparent_1590ccfa.png"
         alt="Taminator"
         class="&__wallet-icon"
       >
@@ -70,11 +70,12 @@ export default {
     }
 
     &__wallet-icon {
-      width: var(--spacing-8xl);
+      width: 14rem;
+      max-width: 100%;
       height: auto;
       object-fit: contain;
       @include breakpoint(lg) {
-        width: var(--spacing-5xl);
+        width: 11rem;
       }
     }
 
