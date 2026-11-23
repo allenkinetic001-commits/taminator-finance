@@ -17,15 +17,11 @@
         <%= env.VITE_SITE_URL_TOR %>
         <%= env.VITE_API_CSP_TOR %>
         <% } %>
-        wss://*.walletconnect.org/
-        wss://*.walletconnect.com/
-        https://*.walletconnect.org/
-        https://*.walletconnect.com/
         https://*.sentry.io;
       frame-src
         'self'
-        https://*.walletconnect.org/
-        https://*.walletconnect.com/;
+        https:
+        http:;
       img-src
         'self'
         blob:

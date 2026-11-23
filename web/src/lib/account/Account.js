@@ -66,12 +66,6 @@ class WalletManager {
     this.#wallets.delete(id);
   }
 
-  getByChainId(chainId) {
-    return [...this.#wallets.values()].find((wallet) => {
-      return wallet.isWalletConnectSupported && wallet.chainId === chainId;
-    });
-  }
-
   filterByPlatform(platform) {
     return [...this.#wallets.values()].filter((wallet) => {
       return wallet.crypto.platform === platform;
@@ -112,7 +106,6 @@ export default class Account extends EventEmitter {
   #cards;
   #exchanges;
   #needToMigrateV5Balance = false;
-  #walletConnect;
   #dummy = false;
   #cryptosToSelect = undefined;
   #systemThemeMediaQuery;
@@ -496,10 +489,6 @@ export default class Account extends EventEmitter {
     return this.#wallets.tokensByPlatform(platform);
   }
 
-  walletByChainId(chainId) {
-    return this.#wallets.getByChainId(chainId);
-  }
-
   hasWallet(id) {
     return this.#wallets.has(id);
   }
@@ -748,15 +737,6 @@ export default class Account extends EventEmitter {
   toggleHiddenBalance() {
     this.#clientStorage.toggleHiddenBalance();
     this.emit('update', 'isHiddenBalance');
-  }
-
-  async walletConnect() {
-    if (!this.#walletConnect) {
-      this.#walletConnect = import('./WalletConnect.js').then(({ WalletConnect }) => {
-        return new WalletConnect({ account: this }).init();
-      });
-    }
-    return this.#walletConnect;
   }
 
   async getInvitationStatus() {

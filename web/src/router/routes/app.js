@@ -23,7 +23,6 @@ import SettingsHardwareView from '../../views/Settings/Hardware/SettingsHardware
 import SettingsPinView from '../../views/Settings/Pin/SettingsPinView.vue';
 import SettingsTorView from '../../views/Settings/Tor/SettingsTorView.vue';
 import SettingsView from '../../views/Settings/SettingsView.vue';
-import SettingsWalletConnectView from '../../views/Settings/WalletConnect/WalletConnectView.vue';
 
 import CardsView from '../../views/Cards/CardsView.vue';
 
@@ -69,10 +68,6 @@ const app = [
         path: 'tor',
         name: 'settings.tor',
         component: SettingsTorView,
-      }, {
-        path: 'walletconnect',
-        name: 'settings.walletconnect',
-        component: SettingsWalletConnectView,
       }],
     }, {
       path: `add/${CRYPTO_ID}`,
@@ -190,16 +185,6 @@ const app = [
       meta: { requiresCards: true },
     }],
     meta: { requiresAuth: true },
-  },
-  {
-    path: '/wc',
-    redirect(to) {
-      if (!to.query.uri) {
-        window.close();
-        return 'notfound';
-      }
-      return { name: 'settings.walletconnect' };
-    },
   },
   {
     path: '/:pathMatch(.*)*',

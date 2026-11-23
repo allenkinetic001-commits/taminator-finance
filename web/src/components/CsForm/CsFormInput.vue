@@ -41,6 +41,10 @@ export default {
       type: String,
       default: 'text',
     },
+    trim: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['update:modelValue'],
 };
@@ -69,7 +73,7 @@ export default {
       autocomplete="off"
       spellcheck="false"
       :placeholder="placeholder"
-      @input="$emit('update:modelValue', $event.target.value.trim())"
+      @input="$emit('update:modelValue', trim ? $event.target.value.trim() : $event.target.value)"
     >
     <div
       v-if="$slots.after"

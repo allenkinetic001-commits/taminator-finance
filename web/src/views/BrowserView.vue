@@ -8,11 +8,22 @@ import CsNavbarButton from '../components/CsNavbarButton.vue';
 import MainLayout from '../layouts/MainLayout.vue';
 
 import ArrowLeftIcon from '../assets/svg/arrowLeft.svg';
-import BrowserIcon from '../assets/svg/browser.svg';
+import ChevronRightIcon from '../assets/svg/chevronRight.svg';
 import HomeIcon from '../assets/svg/home.svg';
+import RefreshIcon from '../assets/svg/refresh.svg';
 import SearchIcon from '../assets/svg/search.svg';
 
 const BOOKMARKS = [
+  {
+    name: 'Google',
+    description: 'Search the web',
+    url: 'https://www.google.com/',
+  },
+  {
+    name: 'DuckDuckGo',
+    description: 'Privacy web search',
+    url: 'https://html.duckduckgo.com/html/',
+  },
   {
     name: 'CoinMarketCap',
     description: 'Crypto prices & market caps',
@@ -25,7 +36,7 @@ const BOOKMARKS = [
   },
   {
     name: 'Uniswap',
-    description: 'Decentralized token swap (connect via WalletConnect)',
+    description: 'Decentralized token swap',
     url: 'https://app.uniswap.org/',
   },
   {
@@ -48,7 +59,7 @@ const BOOKMARKS = [
 export default {
   components: {
     ArrowLeftIcon,
-    BrowserIcon,
+    ChevronRightIcon,
     CsButton,
     CsFormInput,
     CsListItem,
@@ -57,40 +68,116 @@ export default {
     CsNavbarButton,
     HomeIcon,
     MainLayout,
+    RefreshIcon,
     SearchIcon,
   },
   data() {
     return {
       address: '',
       activeUrl: '',
+      historyStack: [],
+      historyIndex: -1,
+      reloadNonce: 0,
+      isLoading: false,
       bookmarks: BOOKMARKS,
     };
   },
+  computed: {
+    iframeSrc() {
+      if (!this.activeUrl) return '';
+      return `/api/browser/proxy?url=${encodeURIComponent(this.activeUrl)}&_r=${this.reloadNonce}`;
+    },
+    canGoBack() {
+      return this.historyIndex > 0;
+    },
+    canGoForward() {
+      return this.historyIndex >= 0 && this.historyIndex < this.historyStack.length - 1;
+    },
+  },
+  mounted() {
+    window.addEventListener('message', this.handleFrameMessage);
+  },
+  beforeUnmount() {
+    window.removeEventListener('message', this.handleFrameMessage);
+  },
   methods: {
-    navigate(input = this.address) {
+    resolveTarget(input) {
       const trimmed = (input || '').trim();
-      if (!trimmed) {
+      if (!trimmed) return '';
+      if (/^https?:\/\//i.test(trimmed)) {
+        return trimmed;
+      }
+      if (/^[^\s]+\.[^\s]{2,}([/:?#].*)?$/i.test(trimmed)) {
+        return `https://${trimmed}`;
+      }
+      return `https://html.duckduckgo.com/html/?q=${encodeURIComponent(trimmed)}`;
+    },
+    loadUrl(target, pushHistory = true) {
+      if (!target) {
         this.activeUrl = '';
         return;
       }
-      let target = trimmed;
-      if (/^https?:\/\//i.test(target)) {
-        // valid scheme
-      } else if (/^[a-z0-9-]+(\.[a-z0-9-]+)+([/:?#].*)?$/i.test(target)) {
-        target = `https://${target}`;
-      } else {
-        target = `https://duckduckgo.com/?q=${encodeURIComponent(target)}`;
+      if (pushHistory) {
+        const nextStack = this.historyStack.slice(0, this.historyIndex + 1);
+        if (nextStack[nextStack.length - 1] !== target) {
+          nextStack.push(target);
+        }
+        this.historyStack = nextStack;
+        this.historyIndex = nextStack.length - 1;
       }
       this.address = target;
       this.activeUrl = target;
+      this.isLoading = true;
+    },
+    navigate(input = this.address) {
+      const target = this.resolveTarget(input);
+      if (!target) {
+        this.goHome();
+        return;
+      }
+      this.loadUrl(target, true);
     },
     openBookmark(url) {
-      this.address = url;
-      this.activeUrl = url;
+      this.loadUrl(url, true);
+    },
+    goBack() {
+      if (!this.canGoBack) return;
+      this.historyIndex -= 1;
+      this.loadUrl(this.historyStack[this.historyIndex], false);
+    },
+    goForward() {
+      if (!this.canGoForward) return;
+      this.historyIndex += 1;
+      this.loadUrl(this.historyStack[this.historyIndex], false);
+    },
+    reload() {
+      if (!this.activeUrl) return;
+      this.reloadNonce += 1;
+      this.isLoading = true;
     },
     goHome() {
       this.activeUrl = '';
       this.address = '';
+      this.isLoading = false;
+    },
+    handleFrameLoad() {
+      this.isLoading = false;
+    },
+    handleFrameMessage(event) {
+      const frameWindow = this.$refs.browserFrame?.contentWindow;
+      if (!frameWindow || event.source !== frameWindow) return;
+      const payload = event.data;
+      if (!payload || typeof payload !== 'object') return;
+      if (payload.type === 'taminator-browser-navigate' && typeof payload.url === 'string') {
+        if (/^https?:\/\//i.test(payload.url)) {
+          this.loadUrl(payload.url, true);
+        }
+      } else if (payload.type === 'taminator-browser-loaded' && typeof payload.url === 'string') {
+        if (/^https?:\/\//i.test(payload.url)) {
+          this.address = payload.url;
+          this.isLoading = false;
+        }
+      }
     },
   },
 };
@@ -116,15 +203,6 @@ export default {
             <ArrowLeftIcon class="rtl-mirror" />
           </CsNavbarButton>
         </template>
-        <template #right>
-          <CsNavbarButton
-            title="WalletConnect"
-            aria-label="WalletConnect"
-            @click="$router.push({ name: 'settings.walletconnect' })"
-          >
-            <BrowserIcon />
-          </CsNavbarButton>
-        </template>
       </CsNavbar>
     </template>
 
@@ -133,11 +211,44 @@ export default {
         class="&__bar"
         @submit.prevent="navigate()"
       >
+        <CsButton
+          v-if="activeUrl"
+          type="secondary"
+          small
+          :disabled="!canGoBack"
+          title="Previous page"
+          aria-label="Previous page"
+          @click="goBack"
+        >
+          <ArrowLeftIcon class="rtl-mirror" />
+        </CsButton>
+        <CsButton
+          v-if="activeUrl"
+          type="secondary"
+          small
+          :disabled="!canGoForward"
+          title="Next page"
+          aria-label="Next page"
+          @click="goForward"
+        >
+          <ChevronRightIcon class="rtl-mirror" />
+        </CsButton>
+        <CsButton
+          v-if="activeUrl"
+          type="secondary"
+          small
+          title="Reload"
+          aria-label="Reload"
+          @click="reload"
+        >
+          <RefreshIcon />
+        </CsButton>
         <CsFormInput
           v-model="address"
           class="&__input"
           small
           clear
+          :trim="false"
           placeholder="Search or enter website / dApp URL"
           @keydown.enter.prevent="navigate()"
         >
@@ -157,6 +268,7 @@ export default {
           type="secondary"
           small
           title="Bookmarks"
+          aria-label="Bookmarks"
           @click="goHome"
         >
           <HomeIcon />
@@ -169,7 +281,7 @@ export default {
       >
         <div class="&__notice">
           <span class="&__notice-text">
-            If the site blocks embedded viewing, open it in a new browser tab and pair with WalletConnect.
+            {{ isLoading ? 'Loading page...' : activeUrl }}
           </span>
           <div class="&__notice-actions">
             <a
@@ -180,34 +292,21 @@ export default {
             >
               Open tab
             </a>
-            <CsButton
-              type="primary-link"
-              small
-              @click="$router.push({ name: 'settings.walletconnect' })"
-            >
-              WalletConnect
-            </CsButton>
           </div>
         </div>
         <iframe
-          :key="activeUrl"
-          :src="activeUrl"
+          ref="browserFrame"
+          :key="iframeSrc"
+          :src="iframeSrc"
           class="&__iframe"
-          title="Web3 Browser"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+          title="Web Browser"
+          sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
           referrerpolicy="no-referrer"
+          @load="handleFrameLoad"
         />
       </div>
 
       <template v-else>
-        <CsListItems title="Quick Connect">
-          <CsListItem
-            title="WalletConnect"
-            description="Connect to dApps via WalletConnect URI or QR"
-            @click="$router.push({ name: 'settings.walletconnect' })"
-          />
-        </CsListItems>
-
         <CsListItems title="Explore Sites & dApps">
           <CsListItem
             v-for="item in bookmarks"
@@ -231,11 +330,13 @@ export default {
 
     &__bar {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: var(--spacing-sm);
+      gap: var(--spacing-xs);
     }
 
     &__input {
+      min-width: 12rem;
       flex-grow: 1;
     }
 
@@ -260,7 +361,11 @@ export default {
 
     &__notice-text {
       @include text-xs;
+      overflow: hidden;
+      max-width: 34rem;
       color: var(--color-secondary);
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     &__notice-actions {

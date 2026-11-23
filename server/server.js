@@ -8,6 +8,7 @@ import middleware from './middleware.js';
 import apiV1 from './lib/v1/api.js';
 import apiV3 from './lib/v3/api.js';
 import apiV4 from './lib/v4/api.js';
+import browserProxy from './lib/browserProxy.js';
 import cryptos from './lib/cryptos.js';
 import nodeApi from './lib/nodeApi.js';
 
@@ -42,6 +43,7 @@ app.use('/api/v1', apiV1);
 app.use('/api/v3', apiV3);
 app.use('/api/v4', apiV4);
 app.use('/api/node/:platform', nodeApi);
+app.use('/api/browser', browserProxy);
 app.all('/api/*', (req, res) => {
   res.status(404).json({ error: 'API endpoint not found' });
 });

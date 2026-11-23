@@ -102,15 +102,12 @@ export default class Cards {
 
   async init() {
     try {
-      const [{ enabled }, config] = await Promise.all([
-        this.#cardRequest({
-          url: 'api/v1/public/status',
-          method: 'get',
-        }),
-        this.#seed ? this.#getConfig() : undefined,
-      ]);
-      this.#enabled = enabled;
-      this.#config = config;
+      const { enabled } = await this.#cardRequest({
+        url: 'api/v1/public/status',
+        method: 'get',
+      });
+      this.#enabled = Boolean(enabled);
+      this.#config = this.#enabled && this.#seed ? await this.#getConfig() : undefined;
     } catch (err) {
       console.error(err);
     }

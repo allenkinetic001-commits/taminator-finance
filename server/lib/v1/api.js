@@ -144,9 +144,17 @@ router.get('/chart/:id', async (req, res) => {
   }
 });
 
-// Cards status
+// Cards status & config
 router.get('/public/status', (req, res) => {
   res.json({ enabled: false });
+});
+
+router.get('/config', (req, res) => {
+  res.json({ products: [], deposit: {} });
+});
+
+router.get('/cards', (req, res) => {
+  res.json([]);
 });
 
 // Swap/exchange endpoints
