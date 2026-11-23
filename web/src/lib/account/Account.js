@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { ed25519 } from '@noble/curves/ed25519';
+import { ed25519 } from './ed25519.js';
 import { hex } from '@scure/base';
 import { hmac } from '@noble/hashes/hmac';
 import { randomBytes } from '@noble/hashes/utils';

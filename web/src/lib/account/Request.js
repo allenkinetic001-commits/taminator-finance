@@ -4,7 +4,7 @@ import buildURL from 'axios/unsafe/helpers/buildURL.js';
 import combineURLs from 'axios/unsafe/helpers/combineURLs.js';
 import { errors } from '@coinspace/cs-common';
 
-import { ed25519 } from '@noble/curves/ed25519';
+import { ed25519 } from './ed25519.js';
 import { hex } from '@scure/base';
 import { sha256 } from '@noble/hashes/sha256';
 
